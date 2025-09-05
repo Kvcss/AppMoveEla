@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../viewmodels/login_viewmodel.dart';
-import '../../widgets/app_button.dart';
-import '../../widgets/app_text_field.dart';
+import '../../widgets/common/app_button.dart';
+import '../../widgets/common/app_text_field.dart';
 
 
 class LoginView extends StatelessWidget {

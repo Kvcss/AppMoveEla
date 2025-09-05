@@ -31,7 +31,6 @@ class RetryOnNetworkErrorInterceptor extends Interceptor {
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) async {
     if (err.type == DioExceptionType.connectionError || err.type == DioExceptionType.receiveTimeout) {
-// Estrutura básica para retry (uma vez). Ajuste conforme necessário.
       try {
         final req = err.requestOptions;
         final dio = Dio();
