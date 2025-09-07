@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../viewmodels/splash_viewmodel.dart';
-import '../../widgets/splash/brand_wave_header.dart';
-import '../../widgets/splash/logo_with_loader.dart';
+import '../../widgets/splash/animated_pulse_logo.dart';
 
 class SplashView extends StatefulWidget {
   const SplashView({super.key});
@@ -21,49 +20,31 @@ class _SplashViewState extends State<SplashView> {
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-
-    return Scaffold(
+    return const Scaffold(
       backgroundColor: Colors.white,
-      body: Stack(
-        fit: StackFit.expand,
-        children: [
-          // Container(
-          //   decoration: BoxDecoration(
-          //     gradient: LinearGradient(
-          //       begin: Alignment.topRight,
-          //       end: Alignment.bottomLeft,
-          //       colors: [cs.background],
-          //     ),
-          //   ),
-          // ),
+      body: Center(child: _ResponsiveLogo()),
+    );
+  }
+}
 
-          // const Align(
-          //   alignment: Alignment.topCenter,
-          //   child: BrandWaveHeader(height: 280),
-          // ),
+class _ResponsiveLogo extends StatelessWidget {
+  const _ResponsiveLogo();
 
-          SafeArea(
-            child: Center(
-              child: LayoutBuilder(
-                builder: (context, constraints) {
-                  final maxW = constraints.maxWidth;
-                  final logoWidth = (maxW * .82).clamp(0, 460).toDouble();
-                  final barWidth = logoWidth * .73;
-
-                  return LogoWithLoader(
-                    asset: 'assets/images/logo_svg.svg',
-                    logoWidth: logoWidth,
-                    gap: 2,
-                    barWidth: barWidth,
-                    barHeight: 6,
-                  );
-                },
-              ),
-            ),
-          ),
-        ],
-      ),
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (_, constraints) {
+        final logoW = (constraints.maxWidth * .92)
+            .clamp(280.0, 720.0)
+            .toDouble();
+        return AnimatedPulseLogo(
+          asset: 'assets/images/logo_svg.svg',
+          width: logoW,
+          scaleMin: 1.0,
+          scaleMax: 1.035,
+          duration: const Duration(milliseconds: 1500),
+        );
+      },
     );
   }
 }

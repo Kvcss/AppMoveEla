@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-/// Exibe logo (PNG/JPG/SVG) com suporte a tint opcional.
-/// - SVG: usa as cores originais; define `logoColor` se quiser tint.
-/// - Raster: aplica tint usando ColorFiltered.
 class BrandLogoStatic extends StatelessWidget {
   const BrandLogoStatic({
     super.key,

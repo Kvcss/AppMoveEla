@@ -6,8 +6,8 @@ class LogoWithLoader extends StatelessWidget {
   const LogoWithLoader({
     super.key,
     required this.asset,
-    this.logoWidth = 240,
-    this.gap = 4,          // gap pequeno para aproximar o loader do logo
+    this.logoWidth = 440,
+    this.gap = 4,
     this.barWidth = 190,
     this.barHeight = 6,
     this.logoColor,
