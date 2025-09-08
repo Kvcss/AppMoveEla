@@ -11,7 +11,10 @@ class LoginOrDivider extends StatelessWidget {
         Expanded(child: Container(height: 1.2, color: cs.primary.withOpacity(.55))),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10),
-          child: Text('OU', style: TextStyle(color: cs.primary, fontWeight: FontWeight.w600)),
+          child: Text(
+            'OU',
+            style: TextStyle(color: cs.primary, fontWeight: FontWeight.w600),
+          ),
         ),
         Expanded(child: Container(height: 1.2, color: cs.primary.withOpacity(.55))),
       ],

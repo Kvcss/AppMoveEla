@@ -2,60 +2,62 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 /// Header rosa com canto inferior-esquerdo arredondado.
-/// A logo é dimensionada pela ALTURA disponível (cabe sempre)
-/// e fica `bottom` px acima da borda inferior.
+/// A logo fica GRANDE e levemente acima da borda inferior,
+/// exatamente como no Figma (sobrepondo o início do conteúdo).
 class LoginHeader extends StatelessWidget {
   const LoginHeader({
     super.key,
-    this.height = 180,              // altura do header
-    this.radius = 90,
-    this.logoHeight,
-    this.logoWidthFraction = 0.8,
-    this.forceWhite = true,
-    this.logoBottomOffset = -100,    // <<< controla a distância até a borda inferior
+    this.asset = 'assets/images/logo_m_svg.svg',
+    this.forceWhiteLogo = true,
   });
 
-  final double height;
-  final double radius;
-  final double? logoHeight;
-  final double logoWidthFraction;
-  final bool forceWhite;
-  final double logoBottomOffset;
+  final String asset;
+  final bool forceWhiteLogo;
+
+  bool _isTablet(double w) => w >= 600;
 
   @override
   Widget build(BuildContext context) {
     final primary = Theme.of(context).colorScheme.primary;
-    final screenW = MediaQuery.of(context).size.width;
+    final w = MediaQuery.of(context).size.width;
 
-    // Se você passar `logoHeight`, usa ele. Senão, calcula pela largura da tela.
-    final double logoH = logoHeight ?? screenW * logoWidthFraction;
+    // Responsividade: tablet ganha tudo um pouco maior
+    final bool tablet = _isTablet(w);
+    final double headerHeight = tablet ? 220 : 150;
+    final double cornerRadius = tablet ? 100 : 50;
+
+    // A logo é dimensionada por largura máxima + clamp para não passar do bom senso
+    final double maxLogoW = tablet ? 560 : 420;
+    final double logoW = (w * 0.72).clamp(260, maxLogoW); // grande
+    final double bottomOverlap = tablet ? -130 : -84; // fica acima do fim do header
 
     return SizedBox(
-      height: height,
+      height: headerHeight,
       width: double.infinity,
       child: Stack(
         alignment: Alignment.bottomCenter,
+        clipBehavior: Clip.none,
         children: [
+          // Fundo rosa com canto arredondado à esquerda
           Container(
-            height: height,
+            height: headerHeight,
             width: double.infinity,
             decoration: BoxDecoration(
               color: primary,
               borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(radius),
+                bottomLeft: Radius.circular(cornerRadius),
               ),
             ),
-            clipBehavior: Clip.antiAlias,
           ),
 
+          // Logo centralizada, bem grande, um pouco acima do fim do header
           Positioned(
-            bottom: logoBottomOffset, // <<< agora desce mais
+            bottom: bottomOverlap,
             child: SvgPicture.asset(
-              'assets/images/logo_m_svg.svg',
-              height: logoH,
+              asset,
+              width: logoW,
               fit: BoxFit.contain,
-              alignment: Alignment.bottomCenter,
-              colorFilter: forceWhite
+              colorFilter: forceWhiteLogo
                   ? const ColorFilter.mode(Colors.white, BlendMode.srcIn)
                   : null,
             ),

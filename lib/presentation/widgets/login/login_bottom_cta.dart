@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 
 class LoginBottomCta extends StatelessWidget {
-  const LoginBottomCta({super.key, required this.text, required this.action, this.onActionTap});
+  const LoginBottomCta({
+    super.key,
+    required this.text,
+    required this.action,
+    this.onActionTap,
+  });
+
   final String text;
   final String action;
   final VoidCallback? onActionTap;
@@ -15,7 +21,11 @@ class LoginBottomCta extends StatelessWidget {
           text,
           textAlign: TextAlign.center,
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(.7),
+            color: Theme.of(context)
+                .textTheme
+                .bodySmall
+                ?.color
+                ?.withOpacity(.7),
           ),
         ),
         const SizedBox(height: 6),

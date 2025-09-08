@@ -66,14 +66,18 @@ class LoginTextField extends StatelessWidget {
         TextField(
           obscureText: obscureText,
           onChanged: onChanged,
-          keyboardType: obscureText ? TextInputType.visiblePassword : TextInputType.emailAddress,
+          keyboardType:
+          obscureText ? TextInputType.visiblePassword : TextInputType.emailAddress,
           decoration: InputDecoration(
             hintText: hint,
             prefixIcon: Icon(prefixIcon, color: cs.onSurface.withOpacity(.85)),
             suffixIcon: onToggleObscure == null
                 ? null
                 : IconButton(
-              icon: Icon(obscureText ? Icons.visibility : Icons.visibility_off),
+              icon: Icon(
+                obscureText ? Icons.visibility : Icons.visibility_off,
+                color: cs.onSurface.withOpacity(.85),
+              ),
               onPressed: onToggleObscure,
             ),
             filled: true,
@@ -82,7 +86,8 @@ class LoginTextField extends StatelessWidget {
             focusedBorder: baseBorder.copyWith(
               borderSide: BorderSide(color: cs.primary, width: 1.6),
             ),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+            contentPadding:
+            const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
           ),
         ),
         if (trailingLinkText != null) ...[
@@ -92,10 +97,15 @@ class LoginTextField extends StatelessWidget {
             child: GestureDetector(
               onTap: onTrailingLinkTap,
               child: Text(
-                trailingLinkText!,
+                '${trailingLinkText!}!',
                 style: TextStyle(
-                  color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(.8),
+                  color: Theme.of(context)
+                      .textTheme
+                      .bodyMedium
+                      ?.color
+                      ?.withOpacity(.8),
                   decoration: TextDecoration.underline,
+                  decorationThickness: 1.2,
                 ),
               ),
             ),
