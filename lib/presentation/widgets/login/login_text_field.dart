@@ -1,101 +1,135 @@
 import 'package:flutter/material.dart';
 
-import '../../../shared/theme/moveela_colors.dart';
+typedef _OnChanged = void Function(String v);
+typedef _Void = void Function();
 
 class LoginTextField extends StatelessWidget {
   const LoginTextField._({
+    super.key,
     required this.hint,
-    this.prefixIcon,
+    required this.icon,
+    required this.controller,
+    required this.focusNode,
+    required this.onChanged,
     this.obscureText = false,
-    this.onChanged,
     this.onToggleObscure,
     this.trailingLinkText,
     this.onTrailingLinkTap,
+    this.errorText,
+    this.keyboardType,
+    this.textInputAction,
+    this.onSubmitted,
   });
 
-  final String hint;
-  final IconData? prefixIcon;
-  final bool obscureText;
-  final ValueChanged<String>? onChanged;
-
-  final VoidCallback? onToggleObscure;
-  final String? trailingLinkText;
-  final VoidCallback? onTrailingLinkTap;
-
   factory LoginTextField.email({
+    Key? key,
     required String hint,
-    ValueChanged<String>? onChanged,
+    required TextEditingController controller,
+    required FocusNode focusNode,
+    required _OnChanged onChanged,
+    String? errorText,
   }) {
     return LoginTextField._(
+      key: key,
       hint: hint,
-      prefixIcon: Icons.mail_outline_rounded,
+      icon: Icons.mail_outline,
+      controller: controller,
+      focusNode: focusNode,
       onChanged: onChanged,
+      keyboardType: TextInputType.emailAddress,
+      textInputAction: TextInputAction.next,
+      errorText: errorText,
     );
   }
 
   factory LoginTextField.password({
+    Key? key,
     required String hint,
-    bool obscureText = true,
-    ValueChanged<String>? onChanged,
-    VoidCallback? onToggleObscure,
+    required bool obscureText,
+    required TextEditingController controller,
+    required FocusNode focusNode,
+    required _OnChanged onChanged,
+    required _Void onToggleObscure,
     String? trailingLinkText,
-    VoidCallback? onTrailingLinkTap,
+    _Void? onTrailingLinkTap,
+    String? errorText,
   }) {
     return LoginTextField._(
+      key: key,
       hint: hint,
-      prefixIcon: Icons.lock_outline_rounded,
-      obscureText: obscureText,
+      icon: Icons.lock_outline,
+      controller: controller,
+      focusNode: focusNode,
       onChanged: onChanged,
+      obscureText: obscureText,
       onToggleObscure: onToggleObscure,
       trailingLinkText: trailingLinkText,
       onTrailingLinkTap: onTrailingLinkTap,
+      textInputAction: TextInputAction.done,
+      errorText: errorText,
     );
   }
+
+  final String hint;
+  final IconData icon;
+  final TextEditingController controller;
+  final FocusNode focusNode;
+  final _OnChanged onChanged;
+
+  final bool obscureText;
+  final _Void? onToggleObscure;
+
+  final String? trailingLinkText;
+  final _Void? onTrailingLinkTap;
+
+  final String? errorText;
+  final TextInputType? keyboardType;
+  final TextInputAction? textInputAction;
+  final ValueChanged<String>? onSubmitted;
 
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    // No dark, inputs são brancos => usar ícones/texto escuros
-    final Color fieldTextColor = isDark ? const Color(0xFF2D2D33) : cs.onBackground;
-    final Color iconColor = isDark ? const Color(0xFF6E5D72) : cs.onSurface.withOpacity(.85);
-
-    // Sem borda no dark (Figma), leve borda no light (vem do tema)
     final baseBorder = OutlineInputBorder(
-      borderRadius: BorderRadius.circular(14),
-      borderSide: BorderSide(
-        color: isDark ? Colors.transparent : cs.onSurface.withOpacity(.35),
-        width: isDark ? 0 : 1.2,
-      ),
+      borderRadius: BorderRadius.circular(12),
+      borderSide: BorderSide(color: cs.outline.withOpacity(.6), width: 1.4),
+    );
+    final errorBorder = OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12),
+      borderSide: BorderSide(color: cs.error, width: 1.6),
+    );
+    final focusedBorder = OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12),
+      borderSide: BorderSide(color: errorText != null ? cs.error : cs.primary, width: 1.8),
     );
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         TextField(
-          style: TextStyle(color: fieldTextColor, fontWeight: FontWeight.w500),
-          obscureText: obscureText,
+          controller: controller,
+          focusNode: focusNode,
           onChanged: onChanged,
-          keyboardType: obscureText ? TextInputType.visiblePassword : TextInputType.emailAddress,
+          keyboardType: keyboardType,
+          textInputAction: textInputAction,
+          obscureText: obscureText,
+          onSubmitted: onSubmitted,
           decoration: InputDecoration(
             hintText: hint,
-            prefixIcon: Icon(prefixIcon, color: iconColor),
-            suffixIcon: onToggleObscure == null
-                ? null
-                : IconButton(
-              icon: Icon(obscureText ? Icons.visibility : Icons.visibility_off, color: iconColor),
+            prefixIcon: Icon(icon),
+            suffixIcon: onToggleObscure != null
+                ? IconButton(
+              icon: Icon(obscureText ? Icons.visibility : Icons.visibility_off),
               onPressed: onToggleObscure,
-            ),
-            filled: true, // a cor vem do tema (branco no dark)
-            enabledBorder: baseBorder,
-            focusedBorder: baseBorder.copyWith(
-              borderSide: BorderSide(
-                color: isDark ? MoveElaColors.primary : cs.primary,
-                width: 1.6,
-              ),
-            ),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+            )
+                : null,
+            filled: true,
+            fillColor: cs.surface,
+            contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
+            enabledBorder: errorText == null ? baseBorder : errorBorder,
+            focusedBorder: focusedBorder,
+            errorText: errorText,
+            errorStyle: TextStyle(color: cs.error, fontSize: 12),
           ),
         ),
         if (trailingLinkText != null) ...[
@@ -105,11 +139,11 @@ class LoginTextField extends StatelessWidget {
             child: GestureDetector(
               onTap: onTrailingLinkTap,
               child: Text(
-                '${trailingLinkText!}!',
+                trailingLinkText!,
                 style: TextStyle(
-                  color: cs.onBackground,
+                  color: cs.primary,
+                  fontSize: 13,
                   decoration: TextDecoration.underline,
-                  decorationThickness: 1.2,
                 ),
               ),
             ),

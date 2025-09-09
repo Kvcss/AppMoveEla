@@ -45,7 +45,6 @@ class LoginView extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    // seu header custom
                     const LoginHeader(),
 
                     Padding(
@@ -66,15 +65,22 @@ class LoginView extends StatelessWidget {
 
                               SizedBox(height: gapLg),
 
+                              // ---- EMAIL ----
                               LoginTextField.email(
                                 hint: 'Email',
+                                controller: vm.emailCtrl,
+                                focusNode: vm.emailFocus,
                                 onChanged: vm.onEmailChanged,
+                                errorText: vm.emailError,
                               ),
 
                               SizedBox(height: gapSm),
 
+                              // ---- PASSWORD ----
                               LoginTextField.password(
                                 hint: 'Password',
+                                controller: vm.passCtrl,
+                                focusNode: vm.passFocus,
                                 obscureText: vm.obscure,
                                 onChanged: vm.onPasswordChanged,
                                 onToggleObscure: vm.toggleObscure,
@@ -82,33 +88,18 @@ class LoginView extends StatelessWidget {
                                 onTrailingLinkTap: () async {
                                   try {
                                     await vm.forgotPassword();
-                                  } catch (e) {
-                                    if (context.mounted) {
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(content: Text(e.toString())),
-                                      );
-                                    }
+                                  } catch (_) {
+                                    // VM já seta erro e foca; ignore aqui
                                   }
                                 },
+                                errorText: vm.passwordError,
                               ),
 
                               SizedBox(height: gapLg),
 
                               LoginPrimaryButton(
                                 text: vm.loading ? 'Entrando…' : 'Entrar',
-                                onPressed: vm.loading
-                                    ? null
-                                    : () async {
-                                  try {
-                                    await vm.submit(context);
-                                  } catch (e) {
-                                    if (context.mounted) {
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(content: Text(e.toString())),
-                                      );
-                                    }
-                                  }
-                                },
+                                onPressed: vm.loading ? null : () => vm.submit(context),
                               ),
 
                               SizedBox(height: gapMd),
@@ -119,19 +110,7 @@ class LoginView extends StatelessWidget {
 
                               LoginGoogleButton(
                                 text: 'Entrar com o google',
-                                onPressed: vm.loading
-                                    ? null
-                                    : () async {
-                                  try {
-                                    await vm.signInWithGoogle(context);
-                                  } catch (e) {
-                                    if (context.mounted) {
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(content: Text(e.toString())),
-                                      );
-                                    }
-                                  }
-                                },
+                                onPressed: vm.loading ? null : () => vm.signInWithGoogle(context),
                               ),
 
                               SizedBox(height: gapXL),
