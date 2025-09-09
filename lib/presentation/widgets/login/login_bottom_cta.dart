@@ -21,11 +21,7 @@ class LoginBottomCta extends StatelessWidget {
           text,
           textAlign: TextAlign.center,
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            color: Theme.of(context)
-                .textTheme
-                .bodySmall
-                ?.color
-                ?.withOpacity(.7),
+            color: cs.onBackground.withOpacity(.7),
           ),
         ),
         const SizedBox(height: 6),

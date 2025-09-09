@@ -1,42 +1,36 @@
 import 'package:get_it/get_it.dart';
-
-import '../../data/datasources/auth_remote_datasource.dart';
-import '../../data/repositories/auth_repository_impl.dart';
+import 'package:firebase_auth/firebase_auth.dart' as fb;
+import 'package:google_sign_in/google_sign_in.dart';
 import '../../domain/repositories/auth_repository.dart';
+import '../../domain/repositories/auth_repository_firebase.dart';
 import '../../domain/services/auth_service.dart';
 import '../../presentation/viewmodels/login_viewmodel.dart';
 import '../../presentation/viewmodels/splash_viewmodel.dart';
-import '../network/api_client.dart';
 import '../storage/secure_storage_service.dart';
 import '../utils/app_logger.dart';
 
-
-
 final getIt = GetIt.instance;
 
-
 Future<void> configureDependencies() async {
-// Core
+  // Core
   getIt.registerLazySingleton<AppLogger>(() => AppLogger());
   getIt.registerLazySingleton<SecureStorageService>(() => SecureStorageService());
-  getIt.registerLazySingleton<ApiClient>(() => ApiClient(
-    baseUrl: const String.fromEnvironment('API_BASE_URL', defaultValue: 'https://api.exemplo.com'),
-  ));
 
+  // Firebase SDKs
+  getIt.registerLazySingleton<fb.FirebaseAuth>(() => fb.FirebaseAuth.instance);
+  getIt.registerLazySingleton<GoogleSignIn>(() => GoogleSignIn(scopes: const ['email', 'profile']));
 
-// Data
-  getIt.registerLazySingleton<AuthRemoteDataSource>(() => AuthRemoteDataSourceImpl(getIt<ApiClient>()));
+  // Repository -> Firebase
+  getIt.registerLazySingleton<AuthRepository>(() =>
+      AuthRepositoryFirebase(auth: getIt<fb.FirebaseAuth>(), googleSignIn: getIt<GoogleSignIn>()));
 
-
-// Domain
-  getIt.registerLazySingleton<AuthRepository>(() => AuthRepositoryImpl(getIt<AuthRemoteDataSource>()));
+  // Service
   getIt.registerLazySingleton<AuthService>(() => AuthService(
     repository: getIt<AuthRepository>(),
     secureStorage: getIt<SecureStorageService>(),
   ));
 
-
-// ViewModels (factory para instâncias novas por tela)
+  // ViewModels
   getIt.registerFactory<SplashViewModel>(() => SplashViewModel(getIt<AuthService>()));
   getIt.registerFactory<LoginViewModel>(() => LoginViewModel(
     authRepository: getIt<AuthRepository>(),

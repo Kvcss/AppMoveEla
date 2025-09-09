@@ -7,17 +7,14 @@ class LoginGreeting extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context).colorScheme;
+    final cs = Theme.of(context).colorScheme;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           title,
           style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-            color: Theme.of(context)
-                .textTheme
-                .bodyMedium
-                ?.color,
+            color: cs.onBackground,
             fontWeight: FontWeight.w800,
           ),
         ),
@@ -25,11 +22,7 @@ class LoginGreeting extends StatelessWidget {
         Text(
           subtitle,
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-            color: Theme.of(context)
-                .textTheme
-                .bodyMedium
-                ?.color
-                ?.withOpacity(.75),
+            color: cs.onBackground.withOpacity(.75),
           ),
         ),
       ],

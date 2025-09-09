@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../shared/theme/moveela_colors.dart';
+
 class LoginTextField extends StatelessWidget {
   const LoginTextField._({
     required this.hint,
@@ -16,7 +18,6 @@ class LoginTextField extends StatelessWidget {
   final bool obscureText;
   final ValueChanged<String>? onChanged;
 
-  // apenas para password
   final VoidCallback? onToggleObscure;
   final String? trailingLinkText;
   final VoidCallback? onTrailingLinkTap;
@@ -28,7 +29,6 @@ class LoginTextField extends StatelessWidget {
     return LoginTextField._(
       hint: hint,
       prefixIcon: Icons.mail_outline_rounded,
-      obscureText: false,
       onChanged: onChanged,
     );
   }
@@ -55,39 +55,47 @@ class LoginTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    // No dark, inputs são brancos => usar ícones/texto escuros
+    final Color fieldTextColor = isDark ? const Color(0xFF2D2D33) : cs.onBackground;
+    final Color iconColor = isDark ? const Color(0xFF6E5D72) : cs.onSurface.withOpacity(.85);
+
+    // Sem borda no dark (Figma), leve borda no light (vem do tema)
     final baseBorder = OutlineInputBorder(
       borderRadius: BorderRadius.circular(14),
-      borderSide: BorderSide(color: cs.onSurface.withOpacity(.35), width: 1.2),
+      borderSide: BorderSide(
+        color: isDark ? Colors.transparent : cs.onSurface.withOpacity(.35),
+        width: isDark ? 0 : 1.2,
+      ),
     );
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         TextField(
+          style: TextStyle(color: fieldTextColor, fontWeight: FontWeight.w500),
           obscureText: obscureText,
           onChanged: onChanged,
-          keyboardType:
-          obscureText ? TextInputType.visiblePassword : TextInputType.emailAddress,
+          keyboardType: obscureText ? TextInputType.visiblePassword : TextInputType.emailAddress,
           decoration: InputDecoration(
             hintText: hint,
-            prefixIcon: Icon(prefixIcon, color: cs.onSurface.withOpacity(.85)),
+            prefixIcon: Icon(prefixIcon, color: iconColor),
             suffixIcon: onToggleObscure == null
                 ? null
                 : IconButton(
-              icon: Icon(
-                obscureText ? Icons.visibility : Icons.visibility_off,
-                color: cs.onSurface.withOpacity(.85),
-              ),
+              icon: Icon(obscureText ? Icons.visibility : Icons.visibility_off, color: iconColor),
               onPressed: onToggleObscure,
             ),
-            filled: true,
-            fillColor: Theme.of(context).colorScheme.surface,
+            filled: true, // a cor vem do tema (branco no dark)
             enabledBorder: baseBorder,
             focusedBorder: baseBorder.copyWith(
-              borderSide: BorderSide(color: cs.primary, width: 1.6),
+              borderSide: BorderSide(
+                color: isDark ? MoveElaColors.primary : cs.primary,
+                width: 1.6,
+              ),
             ),
-            contentPadding:
-            const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
           ),
         ),
         if (trailingLinkText != null) ...[
@@ -99,11 +107,7 @@ class LoginTextField extends StatelessWidget {
               child: Text(
                 '${trailingLinkText!}!',
                 style: TextStyle(
-                  color: Theme.of(context)
-                      .textTheme
-                      .bodyMedium
-                      ?.color
-                      ?.withOpacity(.8),
+                  color: cs.onBackground,
                   decoration: TextDecoration.underline,
                   decorationThickness: 1.2,
                 ),
